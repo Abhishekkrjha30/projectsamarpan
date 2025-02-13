@@ -31,7 +31,7 @@ const ProjectCard = ({
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await authService.getCurrentUser();
+        const response = await authService.getUserById(userId);
         setUserData(response); // Set user data
       } catch (error) {
         console.error("Error fetching user data:", error);

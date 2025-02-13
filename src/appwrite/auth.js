@@ -65,6 +65,20 @@ export class AuthService {
             console.error("AuthService :: logout :: error", error);
         }
     }
+
+    // Method to get a user by user ID
+    async getUserById(userId) {
+        try {
+            // Fetch the user details using the user ID
+            const user = await this.account.get(userId);
+            return user;
+        } catch (error) {
+            console.error("AuthService :: getUserById :: error", error);
+            throw error;
+        }
+    }
+
+    
 }
 
 const authService = new AuthService();
