@@ -18,59 +18,7 @@ export class ProjectSubmissionService {
   }
 
   // Method 1: Submit Project
-  // async submitProject({ title, description, price, image, video, code, userId }) {
-  //   try {
-  //     const projectData = {
-  //       title,
-  //       description,
-  //       price,
-  //       userId,
-  //     };
-
-  //     // Check if image exists and upload
-  //     if (image) {
-  //       const uploadedImage = await this.bucket.createFile(
-  //         conf.appwriteBucketId,
-  //         ID.unique(),
-  //         image
-  //       );
-  //       projectData.image = uploadedImage.$id; // Store file reference
-  //     }
-
-  //     // Check if video exists and upload
-  //     if (video) {
-  //       const uploadedVideo = await this.bucket.createFile(
-  //         conf.appwriteBucketId,
-  //         ID.unique(),
-  //         video
-  //       );
-  //       projectData.video = uploadedVideo.$id; // Store file reference
-  //     }
-
-  //     // Check if code exists and upload
-  //     if (code) {
-  //       const uploadedCode = await this.bucket.createFile(
-  //         conf.appwriteBucketId,
-  //         ID.unique(),
-  //         code
-  //       );
-  //       projectData.code = uploadedCode.$id; // Store file reference
-  //     }
-
-  //     return await this.databases.createDocument(
-  //       conf.appwriteDatabaseId,
-  //       conf.appwriteCollectionId,
-  //       ID.unique(),
-  //       projectData
-  //     );
-  //   } catch (error) {
-  //     console.error("ProjectSubmissionService :: submitProject :: error", error);
-  //     throw error;
-  //   }
-  // }
-
-  // Method 1: Submit Project
-async submitProject({ title, description, price, image, video, projectLink, userId, batch }) {
+async submitProject({ title, description, price, image, video, projectLink, userId, batch ,devName}) {
   try {
     const projectData = {
       title,
@@ -79,6 +27,7 @@ async submitProject({ title, description, price, image, video, projectLink, user
       userId,
       projectLink, // Add project link directly to project data
       batch,
+      devName
     };
 
     // Check if image exists and upload
@@ -144,7 +93,7 @@ async submitProject({ title, description, price, image, video, projectLink, user
   
 
   // Method 4: Update Project
-async updateProject(projectId, { title, description, price, image, video, projectLink, userId,batch }) { 
+async updateProject(projectId, { title, description, price, image, video, projectLink, userId,batch,devName }) { 
   try {
     const projectData = { 
       title: title || '',
@@ -152,6 +101,7 @@ async updateProject(projectId, { title, description, price, image, video, projec
       price: price || 0,
       userId: userId || '',
       batch: batch || '',
+      devName: devName || '',
     };
 
     if (image) {

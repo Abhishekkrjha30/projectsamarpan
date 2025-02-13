@@ -17,6 +17,7 @@ const ProjectCard = ({
   projectLink,
   userId,
   batch,
+  devName,
   handleVideoClick,
   handleBuyProject,
   handleProjectLinkClick,
@@ -28,20 +29,7 @@ const ProjectCard = ({
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true); // Added loading state
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await authService.getUserById(userId);
-        setUserData(response); // Set user data
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false); // Stop loading
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  
 
   if (loading) {
     return <p className="text-center text-gray-500">Loading user data...</p>;
@@ -69,7 +57,7 @@ const ProjectCard = ({
           <span className="font-semibold">Description : </span>{description}
         </p>
         <p className="mt-3 text-sm text-gray-500 w-full h-12 overflow-auto ">
-          <strong>Uploaded by:</strong> {userData ?userData.name : "Loading..."} |{" "}
+          <strong>Uploaded by:</strong> {devName ? devName : "Loading..."} |{" "}
           <strong>Batch:</strong> {batch}
           {/* <strong>Phone:</strong> {"project.uploaderPhone"} */}
         </p>

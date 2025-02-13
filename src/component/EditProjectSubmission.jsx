@@ -5,6 +5,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom"; // Import useParams for project ID
 import projectSubmissionService from "../appwrite/config"; // Import the service
 import { useSelector } from "react-redux";
+import authService from "../appwrite/auth"; // Import the service
+
 
 const EditProjectSubmission = () => {
   const { projectId } = useParams(); // Get project ID from route params
@@ -19,6 +21,8 @@ const EditProjectSubmission = () => {
   });
   const navigate = useNavigate(); // Initialize useNavigate hook
   const userData = useSelector((state) => state.auth.userData);
+  const [devName, setDevName] = useState('')
+
 
   useEffect(() => {
     // Fetch project details for editing
@@ -69,6 +73,7 @@ const EditProjectSubmission = () => {
         video,
         projectLink,
         batch,  // Ensure batch is passed correctly
+        devName,
         userId: userData.$id, // Ensure userId is passed correctly
       });
       toast.success("Project Updated Successfully!");
@@ -80,6 +85,20 @@ const EditProjectSubmission = () => {
       console.error("Error in project update:", error);
     }
   };
+
+  
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await authService.getCurrentUser();
+        setDevName(response); // Set user data
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } 
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">

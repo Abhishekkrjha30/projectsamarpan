@@ -1,12 +1,16 @@
-import { useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useState,useEffect } from "react";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import projectSubmissionService from "../appwrite/config"; // Import the service
+import authService from "../appwrite/auth"; // Import the service
+
 import { useSelector } from "react-redux";
 
 const ProjectSubmission = () => {
+  const [devName, setDevName] = useState('')
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -15,10 +19,12 @@ const ProjectSubmission = () => {
     video: null,
     projectLink: "",
     batch: "",  // Add batch field to formData
+    
   });
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
+  
 
   const handleChange = (e) => {
     const { name, files, value } = e.target;
@@ -31,7 +37,7 @@ const ProjectSubmission = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await projectSubmissionService.submitProject({ ...formData, userId: userData.$id });
+      await projectSubmissionService.submitProject({ ...formData,devName, userId: userData.$id });
       toast.success("Project Submitted Successfully!");
       navigate("/");
     } catch (error) {
@@ -39,6 +45,19 @@ const ProjectSubmission = () => {
       console.error("Error in project submission:", error);
     }
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await authService.getCurrentUser();
+        setDevName(response); // Set user data
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } 
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
