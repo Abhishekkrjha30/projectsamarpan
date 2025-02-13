@@ -4,9 +4,6 @@
 /* eslint-disable react/prop-types */
 import { motion } from "framer-motion";
 import appwriteService from "../appwrite/config";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import authService from "../appwrite/auth"; // Import authService
 
 const ProjectCard = ({
   title,
@@ -26,15 +23,7 @@ const ProjectCard = ({
     return <p className="text-center text-gray-500">No project available.</p>;
   }
 
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true); // Added loading state
-
   
-
-  if (loading) {
-    return <p className="text-center text-gray-500">Loading user data...</p>;
-  }
-
   return (
     <motion.div
       key={userId}

@@ -1,14 +1,14 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom"; // Import useParams for project ID
 import projectSubmissionService from "../appwrite/config"; // Import the service
-import { useSelector } from "react-redux";
-import authService from "../appwrite/auth"; // Import the service
-
+import authService from "../appwrite/auth"
 
 const EditProjectSubmission = () => {
+  const [devName, setDevName] = useState('')
   const { projectId } = useParams(); // Get project ID from route params
   const [formData, setFormData] = useState({
     title: "",
@@ -18,13 +18,31 @@ const EditProjectSubmission = () => {
     video: null,
     projectLink: "",
     batch: "",  // Add batch field to formData
+    devName:devName
   });
   const navigate = useNavigate(); // Initialize useNavigate hook
-  const userData = useSelector((state) => state.auth.userData);
-  const [devName, setDevName] = useState('')
+  const [userData, setUserData] = useState([])
+  // const userData = useSelector((state) => state.auth.userData);
+ 
+    
+  // Fetch user data using authService
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Assuming `authService.getCurrentUser()` is the method to fetch user data
+        const response = await authService.getCurrentUser();
+        setUserData(response); // Set user data
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } 
+    };
 
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
+    console.log(userData);
+    
     // Fetch project details for editing
     const fetchProjectDetails = async () => {
       try {
@@ -38,7 +56,7 @@ const EditProjectSubmission = () => {
           image: null,
           video: null,
           projectLink: projectData.projectLink || "",
-          batch: projectData.batch || ""  // Add batch from project data
+          batch: projectData.batch || "",  // Add batch from project data
         });
       } catch (error) {
         toast.error("Failed to fetch project details.");
@@ -87,18 +105,11 @@ const EditProjectSubmission = () => {
   };
 
   
+  // Check if user is logged in
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await authService.getCurrentUser();
-        setDevName(response); // Set user data
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } 
-    };
-
-    fetchUserData();
-  }, []);
+    setDevName(userData.name);    
+    
+  }, [userData]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">

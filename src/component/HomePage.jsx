@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -7,17 +8,23 @@ import ProjectCard from "./ProjectCard";
 import projectSubmissionService from "../appwrite/config";
 
 const HomePage = () => {
+  const [first, setfirst] = useState([])
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]); // To store filtered projects
   const [selectedBatch, setSelectedBatch] = useState(""); // Selected batch
   const navigate = useNavigate(); // For navigation
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Check if user is logged in
+  
 
+
+ 
   // Fetch projects from Appwrite database
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await projectSubmissionService.getAllProjects();
+        
+        setfirst(response.documents);        
         setProjects(response.documents || []);
         setFilteredProjects(response.documents || []); // Initially set all projects
       } catch (error) {

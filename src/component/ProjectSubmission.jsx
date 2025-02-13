@@ -7,9 +7,8 @@ import { useNavigate } from "react-router-dom";
 import projectSubmissionService from "../appwrite/config"; // Import the service
 import authService from "../appwrite/auth"; // Import the service
 
-import { useSelector } from "react-redux";
-
 const ProjectSubmission = () => {
+  const [userData, setUserData] = useState([])
   const [devName, setDevName] = useState('')
   const [formData, setFormData] = useState({
     title: "",
@@ -19,12 +18,37 @@ const ProjectSubmission = () => {
     video: null,
     projectLink: "",
     batch: "",  // Add batch field to formData
+    devName:devName
     
   });
 
   const navigate = useNavigate();
-  const userData = useSelector((state) => state.auth.userData);
   
+  
+  // Fetch user data using authService
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Assuming `authService.getCurrentUser()` is the method to fetch user data
+        const response = await authService.getCurrentUser();
+        setUserData(response); // Set user data
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } 
+    };
+
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    
+    if (userData) {
+      setFormData((prevData) => ({
+        ...prevData,
+        devName: userData.name, // Set the devName from userData directly
+      }));
+    }
+  }, [userData]); // Runs whenever userData changes
 
   const handleChange = (e) => {
     const { name, files, value } = e.target;
@@ -34,10 +58,12 @@ const ProjectSubmission = () => {
     }));
   };
 
+
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
     try {
-      await projectSubmissionService.submitProject({ ...formData,devName, userId: userData.$id });
+      await projectSubmissionService.submitProject({ ...formData, userId:userData.$id });
       toast.success("Project Submitted Successfully!");
       navigate("/");
     } catch (error) {
@@ -46,19 +72,7 @@ const ProjectSubmission = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await authService.getCurrentUser();
-        setDevName(response); // Set user data
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } 
-    };
-
-    fetchUserData();
-  }, []);
-
+ 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <motion.form

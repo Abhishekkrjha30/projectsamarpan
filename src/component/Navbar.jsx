@@ -67,15 +67,15 @@ const Navbar = () => {
 
               {/* Logout Button */}
               {authStatus && (
-                <motion.button
+                <div
                   onClick={handleLogout}
                   className="font-bold hover:text-indigo-200"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
+                  // initial={{ opacity: 0 }}
+                  // animate={{ opacity: 1 }}
+                  // transition={{ duration: 0.5, delay: 0.4 }}
                 >
                   <LogoutBtn />
-                </motion.button>
+                </div>
               )}
             </div>
 
@@ -117,7 +117,7 @@ const Navbar = () => {
 
               {/* Logout Button in Mobile Menu */}
               {authStatus && (
-                <button
+                <div
                   onClick={() => {
                     handleLogout();
                     setIsOpen(false);
@@ -125,7 +125,7 @@ const Navbar = () => {
                   className="block text-white hover:text-indigo-200 font-medium"
                 >
                   <LogoutBtn />
-                </button>
+                </div>
               )}
             </div>
           </div>

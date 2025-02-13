@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "./Navbar"; // Import Navbar
 import authService from "../appwrite/auth"; // Import authService
 
 const ProfilePage = () => {
