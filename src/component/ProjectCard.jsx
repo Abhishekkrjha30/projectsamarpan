@@ -45,8 +45,13 @@ const ProjectCard = ({
         <p className="text-base text-gray-600 mt-2 w-full h-12 overflow-auto ">
           <span className="font-semibold">Description : </span>{description}
         </p>
-        <p className="mt-3 text-sm text-gray-500 w-full h-12 overflow-auto ">
+        <p className="mt-2 text-sm text-gray-500 w-full overflow-auto ">
           <strong>Uploaded by:</strong> {devName ? devName : "Loading..."} |{" "}
+          {/* <strong>Batch:</strong> {batch} */}
+          {/* <strong>Phone:</strong> {"project.uploaderPhone"} */}
+        </p>
+        <p className="mt-2 text-sm text-gray-500 w-full overflow-auto ">
+          {/* <strong>Uploaded by:</strong> {devName ? devName : "Loading..."} |{" "} */}
           <strong>Batch:</strong> {batch}
           {/* <strong>Phone:</strong> {"project.uploaderPhone"} */}
         </p>
