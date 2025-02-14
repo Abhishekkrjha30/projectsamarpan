@@ -126,7 +126,7 @@ const EditProjectSubmission = () => {
 
         {/* Branch Dropdown */}
         <motion.div
-          className="mb-4  w-[20%]  md:ml-[78%]"
+          className="mb-4 w-[50%] md:w-[20%]  md:ml-[78%]"
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
