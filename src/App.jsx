@@ -3,11 +3,14 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { login, logout } from './store/authSlice';
 import authService from './appwrite/auth';
+import ScrollToTop from "./component/ScrollToTop";
+
 import { HomePage, ChatPage, ProjectSubmission, SignUp, SignIn, IntroPage, Navbar, Footer, ProfilePage, ProjectPage, EditProjectSubmission } from './component/index';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop/>
       <MainContent />
     </Router>
   );
