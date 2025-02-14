@@ -25,45 +25,67 @@ const EditProjectCard = ({
     });
   };
 
-  const handleDeleteClick = () => {
-    const toastId = toast.warn(
-      <div>
-        <p>Are you sure you want to delete this project?</p>
-        <div className="flex gap-2 justify-center mt-2">
-          <button
-            onClick={() => confirmDelete(toastId)}
-            className="px-3 py-1 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition"
-          >
-            Yes, Delete
-          </button>
-        </div>
-      </div>,
-      {
-        position: "top-center",
-        autoClose: false, // Prevent auto-dismiss
-        closeOnClick: false,
-        hideProgressBar: true,
-        draggable: false,
-      }
-    );
-  };
+  // const handleDeleteClick = () => {
+  //   const toastId = toast.warn(
+  //     <div>
+  //       <p>Are you sure you want to delete this project?</p>
+  //       <div className="flex gap-2 justify-center mt-2">
+  //         <button
+  //           onClick={() => confirmDelete(toastId)}
+  //           className="px-3 py-1 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition"
+  //         >
+  //           Yes, Delete
+  //         </button>
+  //       </div>
+  //     </div>,
+  //     {
+  //       position: "top-center",
+  //       autoClose: false, // Prevent auto-dismiss
+  //       closeOnClick: false,
+  //       hideProgressBar: true,
+  //       draggable: false,
+  //     }
+  //   );
+  // };
   
-  const confirmDelete = async (toastId) => {
+  // const confirmDelete = async (toastId) => {
+  //   try {
+  //     toast.dismiss(toastId); // Close the confirmation toast
+  //     const deleteToastId = toast.loading("Deleting project...", {
+  //       position: "top-right",
+  //     });
+  
+  //     await handleDeleteProject($id); // Wait for the delete logic to complete
+  
+  //     toast.dismiss(deleteToastId); // Close the loading toast
+  //     toast.success("Project deleted successfully!", {
+  //       position: "top-right",
+  //       autoClose: 3000,
+  //     });
+  //   } catch (error) {
+  //     toast.dismiss(toastId);
+  //     toast.error("Failed to delete project. Please try again.", {
+  //       position: "top-right",
+  //       autoClose: 3000,
+  //     });
+  //   }
+  // };
+  const handleDeleteClick = async () => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this project?");
+    
+    if (!isConfirmed) return;
+  
     try {
-      toast.dismiss(toastId); // Close the confirmation toast
-      const deleteToastId = toast.loading("Deleting project...", {
-        position: "top-right",
-      });
+      const deleteToastId = toast.loading("Deleting project...", { position: "top-right" });
+      
+      await handleDeleteProject($id); // Execute the delete logic
   
-      await handleDeleteProject($id); // Wait for the delete logic to complete
-  
-      toast.dismiss(deleteToastId); // Close the loading toast
+      toast.dismiss(deleteToastId);
       toast.success("Project deleted successfully!", {
         position: "top-right",
         autoClose: 3000,
       });
     } catch (error) {
-      toast.dismiss(toastId);
       toast.error("Failed to delete project. Please try again.", {
         position: "top-right",
         autoClose: 3000,
@@ -103,7 +125,7 @@ const EditProjectCard = ({
         </button>
         <button
           onClick={handleDeleteClick}
-          className="fixed bottom-0 mb-2 px-1.5 py-1.5 text-sm font-bold bg-gradient-to-r from-red-400 to-red-700 hover:bg-gradient-to-r hover:from-red-700 hover:to-red-400 text-white rounded-lg shadow-md hover:bg-red-500 transition-colors sm:w-auto"
+          className="fixed top-0 left-0 mb-2 px-1.5 py-1.5 text-sm font-bold bg-gradient-to-r from-red-400 to-red-700 hover:bg-gradient-to-r hover:from-red-700 hover:to-red-400 text-white rounded-lg shadow-md hover:bg-red-500 transition-colors sm:w-auto"
         >
           Delete Project
         </button>

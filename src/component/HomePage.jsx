@@ -145,7 +145,7 @@ const HomePage = () => {
       <div>
         {filteredProjects.length > 0 ? (
           filteredProjects.map((project, index) => (
-            <div key={project.id || index} className="p-2 w-full  md:w-1/4 lg:w-1/4 inline-block">
+            <div key={project.id || index} className="p-2 w-full sm:w-1/2 md:w-1/4 lg:w-1/4 inline-block">
               <ProjectCard
                 {...project}
                 handleBuyProject={handleBuyProject}
