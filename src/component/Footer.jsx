@@ -7,13 +7,22 @@ import { Link,useNavigate } from "react-router-dom";
 const Footer = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Check if user is logged in
 
-
+  // Fetch user data using authService
   useEffect(() => {
-      const user = localStorage.getItem("user"); // Example check (use real auth logic)
-      if (user) {
-        setIsLoggedIn(true);
-      }
-    }, []);
+    const fetchUserData = async () => {
+      try {
+        // Assuming `authService.getCurrentUser()` is the method to fetch user data
+        const response = await authService.getCurrentUser();
+        if (response) {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } 
+    };
+
+    fetchUserData();
+  }, [isLoggedIn]);
 
 
   return (
