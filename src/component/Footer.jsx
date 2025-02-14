@@ -8,7 +8,7 @@ const Footer = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Check if user is logged in
 
   // Fetch user data using authService
-  useEffect(() => {
+  
     const fetchUserData = async () => {
       try {
         // Assuming `authService.getCurrentUser()` is the method to fetch user data
@@ -20,9 +20,10 @@ const Footer = () => {
         console.error("Error fetching user data:", error);
       } 
     };
-
+    
+useEffect(() => {
     fetchUserData();
-  }, [isLoggedIn]);
+  }, []);
 
 
   return (
