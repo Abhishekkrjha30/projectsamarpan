@@ -36,7 +36,6 @@ const EditProjectCard = ({
           >
             Yes, Delete
           </button>
-        
         </div>
       </div>,
       {
@@ -49,22 +48,31 @@ const EditProjectCard = ({
     );
   };
   
-  const confirmDelete = (toastId) => {
-    handleDeleteProject($id); // Your delete logic here
-    toast.dismiss(toastId); // Close the warning toast
-    toast.success("Project deleted successfully!", {
-      position: "top-right",
-      autoClose: 3000,
-    });
+  const confirmDelete = async (toastId) => {
+    try {
+      toast.dismiss(toastId); // Close the confirmation toast
+      const deleteToastId = toast.loading("Deleting project...", {
+        position: "top-right",
+      });
+  
+      await handleDeleteProject($id); // Wait for the delete logic to complete
+  
+      toast.dismiss(deleteToastId); // Close the loading toast
+      toast.success("Project deleted successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } catch (error) {
+      toast.dismiss(toastId);
+      toast.error("Failed to delete project. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
   };
   
-  const cancelDelete = (toastId) => {
-    toast.dismiss(toastId); // Close the warning toast
-    toast.info("Deletion canceled.", {
-      position: "top-right",
-      autoClose: 2000,
-    });
-  };
+ 
+  
   return (
     <motion.div
       className="bg-white shadow-xl rounded-lg overflow-hidden max-w-sm mx-auto transition-transform transform hover:scale-101"
@@ -95,7 +103,7 @@ const EditProjectCard = ({
         </button>
         <button
           onClick={handleDeleteClick}
-          className="fixed top-0 right-0 mb-2 px-1.5 py-1.5 text-sm font-bold bg-gradient-to-r from-red-400 to-red-700 hover:bg-gradient-to-r hover:from-red-700 hover:to-red-400 text-white rounded-lg shadow-md hover:bg-red-500 transition-colors w-full sm:w-auto"
+          className="fixed bottom-0 mb-2 px-1.5 py-1.5 text-sm font-bold bg-gradient-to-r from-red-400 to-red-700 hover:bg-gradient-to-r hover:from-red-700 hover:to-red-400 text-white rounded-lg shadow-md hover:bg-red-500 transition-colors sm:w-auto"
         >
           Delete Project
         </button>

@@ -204,7 +204,7 @@ const ProjectSubmission = () => {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 1.0 }}
         >
-          <label className="block text-md font-medium text-gray-700 mb-1">Deployed Project Link (Optional)</label>
+          <label className="block text-md font-medium text-gray-700 mb-1">Deployed Project Link</label>
           <input
             type="url"
             name="projectLink"

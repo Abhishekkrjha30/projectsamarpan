@@ -254,7 +254,7 @@ const EditProjectSubmission = () => {
           transition={{ duration: 1.0 }}
         >
           <label className="block text-md font-medium text-gray-700 mb-1">
-            Deployed Project Link (Optional)
+            Deployed Project Link 
           </label>
           <input
             type="url"
