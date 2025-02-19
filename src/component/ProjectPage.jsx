@@ -40,7 +40,7 @@ const UserProjects = () => {
       setProjects((prevProjects) =>
         prevProjects.filter((project) => project.$id !== projectId)
       );
-      console.log("Project deleted:", projectId);
+      
     } catch (error) {
       console.error("Error deleting project:", error);
     }

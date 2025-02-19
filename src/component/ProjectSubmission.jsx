@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState,useEffect } from "react";
+import { Query } from "appwrite";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,6 +9,8 @@ import projectSubmissionService from "../appwrite/config"; // Import the service
 import authService from "../appwrite/auth"; // Import the service
 
 const ProjectSubmission = () => {
+  const [user, setUser] = useState(null); // Store current user
+  const [projects, setProjects] = useState([]); // Store projects list
   const [userData, setUserData] = useState([])
   const [devName, setDevName] = useState('')
   const [formData, setFormData] = useState({
@@ -18,7 +21,7 @@ const ProjectSubmission = () => {
     video: null,
     projectLink: "",
     batch: "",  // Add batch field to formData
-    devName:devName
+    devName:userData.name || "",
     
   });
 
@@ -40,6 +43,33 @@ const ProjectSubmission = () => {
     fetchUserData();
   }, []);
 
+  // Fetch All projects submitted by the user
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Fetch the currently logged-in user
+        const currentUser = await authService.getCurrentUser();
+        setUser(currentUser);
+
+        // Fetch projects submitted by the user
+        const userProjects = await projectSubmissionService.getAllProjects([
+          Query.equal("userId", currentUser.$id),
+        ]);
+        setProjects(userProjects.documents); // Set fetched projects
+      } catch (error) {
+        console.error("Error fetching user or projects:", error);
+      } 
+    };
+
+    fetchUserData();
+  }, []);
+
+  // same title already exists in the projects 
+  const isProjectTitleDuplicate = (title) => {
+    return projects.some((project) => project.title.toLowerCase() === title.toLowerCase());
+    
+  };
+
   useEffect(() => {
     
     if (userData) {
@@ -49,6 +79,8 @@ const ProjectSubmission = () => {
       }));
     }
   }, [userData]); // Runs whenever userData changes
+
+
 
   const handleChange = (e) => {
     const { name, files, value } = e.target;
@@ -60,8 +92,14 @@ const ProjectSubmission = () => {
 
 
   const handleSubmit = async (e) => {
-    
+
     e.preventDefault();
+
+    if(isProjectTitleDuplicate(formData.title)){
+      toast.error("Project with the same title already exists in your list.");
+      return;
+    }
+    
     try {
       await projectSubmissionService.submitProject({ ...formData, userId:userData.$id });
       toast.success("Project Submitted Successfully!");
@@ -72,6 +110,8 @@ const ProjectSubmission = () => {
     }
   };
 
+  
+  
  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

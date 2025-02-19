@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Client, Account, ID } from "appwrite";
 import conf from "../conf/conf.js";
 
@@ -65,6 +66,9 @@ export class AuthService {
             console.error("AuthService :: logout :: error", error);
         }
     }
+
+
+
 
    
     

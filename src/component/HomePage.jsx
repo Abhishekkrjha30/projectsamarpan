@@ -8,12 +8,13 @@ import ProjectCard from "./ProjectCard";
 import projectSubmissionService from "../appwrite/config";
 
 const HomePage = () => {
-  const [first, setfirst] = useState([])
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]); // To store filtered projects
   const [selectedBatch, setSelectedBatch] = useState(""); // Selected batch
   const navigate = useNavigate(); // For navigation
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Check if user is logged in
+  const [user, setUser] = useState('')
+  
   
 
 
@@ -23,8 +24,7 @@ const HomePage = () => {
     const fetchProjects = async () => {
       try {
         const response = await projectSubmissionService.getAllProjects();
-        
-        setfirst(response.documents);        
+                
         setProjects(response.documents || []);
         setFilteredProjects(response.documents || []); // Initially set all projects
       } catch (error) {
@@ -36,7 +36,14 @@ const HomePage = () => {
 
   // Check if user is logged in
   useEffect(() => {
-    const user = localStorage.getItem("user"); // Example check (use real auth logic)
+    
+    const storedUser = localStorage.getItem("user"); // Example check (use real auth logic)
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser); // Parse the JSON string
+      setUser(parsedUser.$id);
+      setIsLoggedIn(true);
+    }
+    
     if (user) {
       setIsLoggedIn(true);
     }
@@ -75,6 +82,8 @@ const HomePage = () => {
     }
   };
 
+  
+
   // Handle video click action
   const handleVideoClick = (video) => {
     if (isLoggedIn) {
@@ -84,20 +93,19 @@ const HomePage = () => {
     }
   };
 
-  // Handle code click action
-  const handleProjectLinkClick = (projectLink) => {
-    if (isLoggedIn) {
-      window.open(projectLink, "_blank"); // Open the video in a new tab
-    } else {
-      toast.error("You must be logged in to see the project!");
-    }
-  };
-
+  
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <h1 className="text-2xl md:text-3xl font-extrabold text-center text-gray-800 mb-8">
         All Uploaded Projects
       </h1>
+
+      {/* Display Number of Projects */}
+      <p className="text-lg text-center text-gray-700 font-semibold mb-4">
+        {selectedBatch
+          ? `Total Projects in ${selectedBatch} : ${filteredProjects.length}`
+          : `Total Projects : ${projects.length}`}
+      </p>
 
       {/* Batch Filter Dropdown */}
       <div className="mb-6  md:ml-[80%]">
@@ -147,10 +155,12 @@ const HomePage = () => {
           filteredProjects.map((project, index) => (
             <div key={project.id || index} className="p-2 w-full sm:w-1/2 md:w-1/4 lg:w-1/4 inline-block">
               <ProjectCard
+               id={project.$id}  // Pass project ID as a prop
+               currentUserId={user}
                 {...project}
                 handleBuyProject={handleBuyProject}
                 handleVideoClick={handleVideoClick}
-                handleProjectLinkClick={handleProjectLinkClick}
+                
               />
             </div>
           ))

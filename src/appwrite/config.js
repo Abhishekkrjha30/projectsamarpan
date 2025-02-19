@@ -189,6 +189,108 @@ async updateProject(projectId, { title, description, price, image, video, projec
       fileId
     );
   }
+
+  // Method 9: UpdateLikes 
+  async updateLikes(projectId, userId) {
+    try {
+      // Fetch the existing document
+      const project = await this.databases.getDocument(
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
+        projectId
+      );
+      // Ensure likedBy is an array (parse JSON if stored as string)
+      let updatedLikes = [];
+      if (project.likedBy) {
+        updatedLikes = JSON.parse(project.likedBy); // Convert string to array
+      }
+  
+      // Toggle like: Remove if exists, otherwise add
+      if (updatedLikes.includes(userId)) {
+        updatedLikes = updatedLikes.filter((id) => id !== userId); // Remove like
+      } else {
+        updatedLikes.push(userId); // Add like
+      }
+  
+      // Convert array back to JSON string before storing
+      const updatedProject = await this.databases.updateDocument(
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
+        projectId,
+        { likedBy: JSON.stringify(updatedLikes) } // Store as string
+      );
+  
+      return updatedLikes; // Return updated likes array
+    } catch (error) {
+      console.error("ProjectSubmissionService :: updateLikes :: error", error);
+      throw error;
+    }
+  }
+  
+  
+// Method 10: Get Likes
+async getLikes(projectId) {
+  try {
+    const project = await this.databases.getDocument(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      projectId
+    );
+
+    // Ensure likedBy is properly parsed into an array
+    return project.likedBy ? JSON.parse(project.likedBy) : []; 
+  } catch (error) {
+    console.error("ProjectSubmissionService :: getLikes :: error", error);
+    return []; // Return an empty array even on error
+  }
+}
+
+
+// Method 11: Check if User has Liked the Project
+async hasUserLiked(projectId, userId) {
+  try {
+    const project = await this.databases.getDocument(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      projectId
+    );
+
+    return Array.isArray(project.likedBy) && project.likedBy.includes(userId);
+  } catch (error) {
+    console.error("ProjectSubmissionService :: hasUserLiked :: error", error);
+    return false;
+  }
+}
+
+
+// Method 12: Update Views
+async updateViews(projectId) {
+  try {
+    // Fetch the existing document
+    const project = await this.databases.getDocument(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      projectId
+    );
+
+    // Increment views count
+    const updatedViews = (project.views || 0) + 1;
+
+    // Update the project with the new views count
+    await this.databases.updateDocument(
+      conf.appwriteDatabaseId,
+      conf.appwriteCollectionId,
+      projectId,
+      { views: updatedViews }
+    );
+
+    return updatedViews;
+  } catch (error) {
+    console.error("ProjectSubmissionService :: updateViews :: error", error);
+    throw error;
+  }
+}
+
 }
 
 // Singleton Export
