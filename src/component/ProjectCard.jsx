@@ -177,13 +177,13 @@ const ProjectCard = ({
           className="flex flex-col items-center cursor-pointer p-2 rounded-lg transition-transform hover:scale-103  absolute top-[59%] md:top-[62%] right-0"
           onClick={handleLikeClick}
         >
-          <FaHeart className={`text-lg ${liked ? "text-red-500" : "text-gray-400"}`} />
+          <FaHeart className={`text-xl ${liked ? "text-red-500" : "text-gray-400"}`} />
           <span className="text-gray-700 font-semibold text-sm">{likes}</span>
         </div>
 
         {/* ✅ View Icon */}
         <div className="flex flex-col items-center cursor-pointer p-2 rounded-lg transition-transform hover:scale-102 absolute top-[69%] md:top-[72%] right-0">
-          <FaEye className="text-lg text-gray-500" />
+          <FaEye className="text-xl text-gray-500" />
           <span className="text-gray-700 font-semibold text-sm">{view}</span>
         </div>
       </div>
