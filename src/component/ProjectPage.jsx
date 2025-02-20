@@ -21,7 +21,10 @@ const UserProjects = () => {
         const userProjects = await projectSubmissionService.getAllProjects([
           Query.equal("userId", currentUser.$id),
         ]);
-        setProjects(userProjects.documents); // Set fetched projects
+        // Reverse the order to show latest projects first
+        const reversedProjects = userProjects.documents ? [...userProjects.documents].reverse() : [];
+  
+        setProjects(reversedProjects); // Set fetched projects in reverse order
       } catch (error) {
         console.error("Error fetching user or projects:", error);
       } finally {

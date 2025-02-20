@@ -25,8 +25,12 @@ const HomePage = () => {
       try {
         const response = await projectSubmissionService.getAllProjects();
                 
-        setProjects(response.documents || []);
-        setFilteredProjects(response.documents || []); // Initially set all projects
+       
+      // Reverse the order so the latest project appears first
+      const reversedProjects = response.documents ? [...response.documents].reverse() : [];
+      
+      setProjects(reversedProjects);
+      setFilteredProjects(reversedProjects); // Initially set all projects in reverse order
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
