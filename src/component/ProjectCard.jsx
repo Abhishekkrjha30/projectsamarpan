@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import {  toast } from "react-toastify";
 import { FaHeart, FaEye } from "react-icons/fa";
@@ -32,7 +33,6 @@ const ProjectCard = ({
   useEffect(() => {
     const storedUser = localStorage.getItem("user"); // Example check (use real auth logic)
     setView(views?views:0);
-    console.log(view);
     
     if (storedUser) {
       setIsLoggedIn(true);
@@ -49,6 +49,8 @@ const ProjectCard = ({
         
         
         setLiked(likedByArray.includes(currentUserId));
+
+         
       } catch (error) {
         console.error("Error fetching likes:", error);
         setLikes(0);
@@ -97,11 +99,24 @@ const ProjectCard = ({
       toast.error("You must be logged in to like the project!");
       return;
     }
+    if (!liked) { // Only send notification if the user hasn't already liked the project
+      await appwriteConfig.createNotification({
+        projectId: id,
+        likedByUserId: currentUserId,
+        type: "like",
+      });
+
+    }
     try {
+     
       const updatedLikes = await appwriteConfig.updateLikes(id, currentUserId);
+       
       setLikes(updatedLikes.length);
       
       setLiked(updatedLikes.includes(currentUserId));
+      // ✅ Create Notification when user likes a project
+
+    
     } catch (error) {
       console.error("Error updating likes:", error);
     }

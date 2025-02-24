@@ -6,6 +6,7 @@ import authService from './appwrite/auth';
 import ScrollToTop from "./component/ScrollToTop";
 
 import { HomePage, ChatPage, ProjectSubmission, SignUp, SignIn, IntroPage, Navbar, Footer, ProfilePage, ProjectPage, EditProjectSubmission } from './component/index';
+// import NotificationsPage from './component/notification/NotificationsPage';
 
 function App() {
   return (
@@ -64,6 +65,7 @@ const MainContent = () => {
           <Route path="/project-submission" element={<ProjectSubmission />} />
           <Route path="/projectPage" element={<ProjectPage />} />
           <Route path="/chat" element={<ChatPage />} />
+          {/* <Route path="/notifications" element={<NotificationsPage/>} /> */}
           {/* Add this route for EditProjectSubmission */}
           <Route path="/edit-project/:projectId" element={<EditProjectSubmission />} />
         </Routes>

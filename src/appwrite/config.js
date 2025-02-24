@@ -3,6 +3,8 @@
 /* eslint-disable no-unused-vars */
 import { Client, ID, Databases, Storage, Query } from "appwrite";
 import conf from "../conf/conf.js"; // Replace with your configuration file
+import authService from "./auth.js"; // Import AuthService
+
 
 export class ProjectSubmissionService {
   client = new Client();
@@ -71,6 +73,7 @@ async submitProject({ title, description, price, image, video, projectLink, user
         conf.appwriteCollectionId,
         projectId
       );
+      
     } catch (error) {
       console.error("ProjectSubmissionService :: getProjectById :: error", error);
       throw error;
@@ -78,18 +81,61 @@ async submitProject({ title, description, price, image, video, projectLink, user
   }
 
   // Method 3: Get All Projects
+  // async getAllProjects(queries = []) {
+  //   try {
+  //     return await this.databases.listDocuments(
+  //       conf.appwriteDatabaseId,
+  //       conf.appwriteCollectionId,
+  //       queries
+  //     );
+      
+  //   } catch (error) {
+  //     console.error("ProjectSubmissionService :: getAllProjects :: error", error);
+  //     throw error;
+  //   }
+  // }
+
   async getAllProjects(queries = []) {
     try {
-      return await this.databases.listDocuments(
-        conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        queries
-      );
+        let allDocuments = [];
+        let lastDocument = null;
+        const limit = 100; // Max limit per request
+
+        while (true) {
+            let queryBatch = [...queries, Query.limit(limit)];
+
+            if (lastDocument) {
+                queryBatch.push(Query.cursorAfter(lastDocument.$id));
+            }
+
+
+            let response = await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                queryBatch
+            );
+
+            
+
+            allDocuments = [...allDocuments, ...response.documents];
+
+            if (response.documents.length < limit) {
+                break;
+            }
+
+            lastDocument = response.documents[response.documents.length - 1];
+        }
+
+        return allDocuments;
     } catch (error) {
-      console.error("ProjectSubmissionService :: getAllProjects :: error", error);
-      throw error;
+        console.error("ProjectSubmissionService :: getAllProjects :: error", error);
+        throw error;
     }
-  }
+}
+
+
+
+
   
 
   // Method 4: Update Project
@@ -245,25 +291,7 @@ async getLikes(projectId) {
   }
 }
 
-
-// Method 11: Check if User has Liked the Project
-async hasUserLiked(projectId, userId) {
-  try {
-    const project = await this.databases.getDocument(
-      conf.appwriteDatabaseId,
-      conf.appwriteCollectionId,
-      projectId
-    );
-
-    return Array.isArray(project.likedBy) && project.likedBy.includes(userId);
-  } catch (error) {
-    console.error("ProjectSubmissionService :: hasUserLiked :: error", error);
-    return false;
-  }
-}
-
-
-// Method 12: Update Views
+// Method 11: Update Views
 async updateViews(projectId) {
   try {
     // Fetch the existing document
@@ -290,6 +318,109 @@ async updateViews(projectId) {
     throw error;
   }
 }
+
+
+// // Method 12: Create Notification
+// async createNotification({ projectId, likedByUserId, type }) {
+//   try {
+//     // Fetch project details
+//     const project = await this.getProjectById(projectId);
+
+//     // Fetch user details using AuthService
+//     const likedByUser = await authService.getUserById(likedByUserId);
+//     const likedByUserName = likedByUser?.name || "Someone";
+
+//     const notificationData = {
+//       title: "Project Liked ",
+//       message: ` Your project "${project.title}" was liked by ${likedByUserName}`,
+//       userId: project.userId,
+//       type,
+//       timestamp: new Date().toISOString(),
+//       seen: false,
+//       projectId:projectId,
+//     };
+
+//     return await this.databases.createDocument(
+//       conf.appwriteDatabaseId,
+//       conf.appwriteNotificationsCollectionId,
+//       ID.unique(),
+//       notificationData
+//     );
+//   } catch (error) {
+//     console.error("Error in createNotification:", error);
+//     throw error;
+//   }
+// }
+
+// // Method 13: Get All Notifications by User ID
+// async getAllNotificationsByUserId(userId) {
+//   try {
+//     return await this.databases.listDocuments(
+//       conf.appwriteDatabaseId,
+//       conf.appwriteNotificationsCollectionId,
+//       [Query.equal("userId", userId)] // ✅ Filter by userId
+//     );
+//   } catch (error) {
+//     console.error("Error fetching notifications for user:", error);
+//     throw error;
+//   }
+// }
+
+
+// // Method 14: Mark Notification As Seen
+// async markNotificationAsSeen(notificationId) {
+//   try {
+//     return await this.databases.updateDocument(
+//       conf.appwriteDatabaseId,
+//       conf.appwriteNotificationsCollectionId, // ✅ Updated collection ID reference
+//       notificationId,
+//       { seen: true }
+//     );
+//   } catch (error) {
+//     console.error("Error marking notification as seen:", error);
+//     throw error;
+//   }
+// }
+
+
+// // Method 16: Get Unseen  Notification 
+// async getUnseenNotifications(userId) {
+//   try {
+//     if (!userId) throw new Error("User ID is missing");
+
+//     const response = await this.databases.listDocuments(
+//       conf.appwriteDatabaseId,
+//       conf.appwriteNotificationsCollectionId,
+//       [Query.equal("userId", userId), Query.equal("seen", false)]
+//     );
+
+    
+//     return response;
+//   } catch (error) {
+//     console.error("Error fetching unseen notifications:", error);
+//     throw error;
+//   }
+// }
+
+
+
+// // Method 17: Get Current  Notification 
+// async getCurrentNotifications(userId, limit = 10) {
+//   try {
+//     return await this.databases.listDocuments(
+//       conf.appwriteDatabaseId,
+//       conf.appwriteNotificationsCollectionId, // ✅ Updated collection ID reference
+//       [
+//         Query.equal("userId", userId),
+//         Query.orderDesc("timestamp"),
+//         Query.limit(limit),
+//       ]
+//     );
+//   } catch (error) {
+//     console.error("Error fetching current notifications:", error);
+//     throw error;
+//   }
+// }
 
 }
 
