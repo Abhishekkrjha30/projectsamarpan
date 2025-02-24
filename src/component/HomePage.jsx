@@ -48,11 +48,9 @@ const HomePage = () => {
     const fetchProjects = async () => {
       try {
         const response = await projectSubmissionService.getAllProjects();
-        console.log("Fetched Projects:", response);
 
         if (response) {
           const reversedProjects = [...response].reverse();
-          console.log("reversedProjects",reversedProjects);
           
           setProjects(reversedProjects);
           setFilteredProjects(reversedProjects);
