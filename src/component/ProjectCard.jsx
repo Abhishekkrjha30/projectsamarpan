@@ -99,14 +99,14 @@ const ProjectCard = ({
       toast.error("You must be logged in to like the project!");
       return;
     }
-    if (!liked) { // Only send notification if the user hasn't already liked the project
-      await appwriteConfig.createNotification({
-        projectId: id,
-        likedByUserId: currentUserId,
-        type: "like",
-      });
+    // if (!liked) { // Only send notification if the user hasn't already liked the project
+    //   await appwriteConfig.createNotification({
+    //     projectId: id,
+    //     likedByUserId: currentUserId,
+    //     type: "like",
+    //   });
 
-    }
+    // }
     try {
      
       const updatedLikes = await appwriteConfig.updateLikes(id, currentUserId);
