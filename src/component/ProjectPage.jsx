@@ -22,7 +22,8 @@ const UserProjects = () => {
           Query.equal("userId", currentUser.$id),
         ]);
         // Reverse the order to show latest projects first
-        const reversedProjects = userProjects.documents ? [...userProjects.documents].reverse() : [];
+        
+        const reversedProjects = userProjects ? [...userProjects].reverse() : [];        
   
         setProjects(reversedProjects); // Set fetched projects in reverse order
       } catch (error) {

@@ -66,9 +66,9 @@ const ProjectSubmission = () => {
 
   // same title already exists in the projects 
   const isProjectTitleDuplicate = (title) => {
-    return projects.some((project) => project.title.toLowerCase() === title.toLowerCase());
-    
+    return projects?.length > 0 && projects.some((project) => project.title.toLowerCase() === title.toLowerCase());
   };
+  
 
   useEffect(() => {
     

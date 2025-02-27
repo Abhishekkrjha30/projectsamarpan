@@ -41,7 +41,6 @@ const EditProjectSubmission = () => {
   }, []);
 
   useEffect(() => {
-    console.log(userData);
     
     // Fetch project details for editing
     const fetchProjectDetails = async () => {
