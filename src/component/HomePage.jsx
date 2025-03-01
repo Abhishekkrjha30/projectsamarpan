@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import ProjectCard from "./ProjectCard";
 import projectSubmissionService from "../appwrite/config";
+import { useSelector } from "react-redux";
+
 
 const HomePage = () => {
   const [projects, setProjects] = useState([]);
@@ -14,6 +16,8 @@ const HomePage = () => {
   const navigate = useNavigate(); // For navigation
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Check if user is logged in
   const [user, setUser] = useState('')
+  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
+
   
   
   useEffect(() => {
@@ -42,10 +46,16 @@ const HomePage = () => {
 
   // Check if user is logged in
   useEffect(() => {
+    if (!authStatus) return; // Check if user is logged in first
+    
     
     const storedUser = localStorage.getItem("user"); // Example check (use real auth logic)
     if (storedUser) {
+      
+      
       const parsedUser = JSON.parse(storedUser); // Parse the JSON string
+      console.log(parsedUser);
+      
       setUser(parsedUser.$id);
       setIsLoggedIn(true);
     }
