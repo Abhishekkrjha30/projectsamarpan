@@ -19,9 +19,12 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (!authStatus) return; // Check if user is logged in first
       try {
+                
         const user = await authService.getCurrentUser();
         if (user) {
+          
           setUserId(user.$id);
         }
       } catch (error) {
@@ -30,7 +33,7 @@ const Navbar = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [authStatus]);
   
 
   // useEffect(() => {

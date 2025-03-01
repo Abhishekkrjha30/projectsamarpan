@@ -3,14 +3,19 @@
 import { useState ,useEffect} from "react";
 import { Link,useNavigate } from "react-router-dom";
 import authService from "../appwrite/auth"
+import { useSelector } from "react-redux";
+
 
 
 const Footer = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Check if user is logged in
+  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
+
 
   // Fetch user data using authService
   
     const fetchUserData = async () => {
+      if (!authStatus) return; // Check if user is logged in first
       try {
         // Assuming `authService.getCurrentUser()` is the method to fetch user data
         const response = await authService.getCurrentUser();

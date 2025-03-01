@@ -29,8 +29,12 @@ const ProjectCard = ({
   const [liked, setLiked] = useState(false);
   const [view, setView] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Check if user is logged in
+  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
+
 
   useEffect(() => {
+    if (!authStatus) return; // Check if user is logged in first
+
     const storedUser = localStorage.getItem("user"); // Example check (use real auth logic)
     setView(views?views:0);
     

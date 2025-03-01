@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../appwrite/auth"; // Import authService
+import { useSelector } from "react-redux";
+
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -9,9 +11,13 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true); // Track loading state
+  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
+
 
   // Fetch user data using authService
   useEffect(() => {
+    if (!authStatus) return; // Check if user is logged in first
+
     const fetchUserData = async () => {
       try {
         // Assuming `authService.getCurrentUser()` is the method to fetch user data

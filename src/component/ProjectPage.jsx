@@ -4,13 +4,19 @@ import { Query } from "appwrite";
 import authService from "../appwrite/auth"; // For authentication
 import projectSubmissionService from "../appwrite/config"; // Service to fetch projects
 import EditProjectCard from "./EditProjectCard"; // Import EditProjectCard component
+import { useSelector } from "react-redux";
+
 
 const UserProjects = () => {
   const [user, setUser] = useState(null); // Store current user
   const [projects, setProjects] = useState([]); // Store projects list
   const [loading, setLoading] = useState(true); // Track loading state
+  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
+
 
   useEffect(() => {
+    if (!authStatus) return; // Check if user is logged in first
+
     const fetchUserData = async () => {
       try {
         // Fetch the currently logged-in user

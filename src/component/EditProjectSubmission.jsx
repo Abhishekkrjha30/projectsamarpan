@@ -6,9 +6,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom"; // Import useParams for project ID
 import projectSubmissionService from "../appwrite/config"; // Import the service
 import authService from "../appwrite/auth"
+import { useSelector } from "react-redux";
+
 
 const EditProjectSubmission = () => {
   const [devName, setDevName] = useState('')
+  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
   const { projectId } = useParams(); // Get project ID from route params
   const [formData, setFormData] = useState({
     title: "",
@@ -27,6 +30,7 @@ const EditProjectSubmission = () => {
     
   // Fetch user data using authService
   useEffect(() => {
+    if (!authStatus) return; // Check if user is logged in first
     const fetchUserData = async () => {
       try {
         // Assuming `authService.getCurrentUser()` is the method to fetch user data

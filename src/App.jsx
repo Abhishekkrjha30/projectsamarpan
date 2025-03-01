@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { login, logout } from './store/authSlice';
 import authService from './appwrite/auth';
 import ScrollToTop from "./component/ScrollToTop";
+
 
 import { HomePage, ChatPage, ProjectSubmission, SignUp, SignIn, IntroPage, Navbar, Footer, ProfilePage, ProjectPage, EditProjectSubmission } from './component/index';
 // import NotificationsPage from './component/notification/NotificationsPage';
@@ -21,10 +22,16 @@ const MainContent = () => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const location = useLocation(); // Get current location
+  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
+
 
   useEffect(() => {
+    
     const checkUserStatus = async () => {
+
       try {
+        if (!authStatus) return; // Check if user is logged in first
+
         const userData = await authService.getCurrentUser();
         if (userData) {
           dispatch(login({ userData }));

@@ -7,11 +7,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import projectSubmissionService from "../appwrite/config"; // Import the service
 import authService from "../appwrite/auth"; // Import the service
+import { useSelector } from "react-redux";
+
 
 const ProjectSubmission = () => {
   const [user, setUser] = useState(null); // Store current user
   const [projects, setProjects] = useState([]); // Store projects list
   const [userData, setUserData] = useState([])
+  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
   const [devName, setDevName] = useState('')
   const [formData, setFormData] = useState({
     title: "",
@@ -30,7 +33,10 @@ const ProjectSubmission = () => {
   
   // Fetch user data using authService
   useEffect(() => {
+          if (!authStatus) return; // Check if user is logged in first
+
     const fetchUserData = async () => {
+      
       try {
         // Assuming `authService.getCurrentUser()` is the method to fetch user data
         const response = await authService.getCurrentUser();
@@ -46,6 +52,8 @@ const ProjectSubmission = () => {
   // Fetch All projects submitted by the user
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!authStatus) return; // Check if user is logged in first
+
       try {
         // Fetch the currently logged-in user
         const currentUser = await authService.getCurrentUser();

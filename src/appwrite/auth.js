@@ -45,6 +45,7 @@ export class AuthService {
 
     // Get current user
     async getCurrentUser() {
+        
         try {
             return await this.account.get();
              // Return user details if session exists

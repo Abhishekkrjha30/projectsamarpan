@@ -16,34 +16,6 @@ const HomePage = () => {
   const [user, setUser] = useState('')
   
   
-
-
- 
-  // Fetch projects from Appwrite database
-  // useEffect(() => {
-  //   const fetchProjects = async () => {
-  //     try {
-  //       const response = await projectSubmissionService.getAllProjects();
-  //       console.log("Home ",response);
-        
-
-                
-       
-  //     // Reverse the order so the latest project appears first
-  //     const reversedProjects = response.documents ? [...response.documents].reverse() : [];
-      
-  //     setProjects(reversedProjects);
-  //     setFilteredProjects(reversedProjects); // Initially set all projects in reverse order
-  //     console.log(reversedProjects);
-      
-  //     } catch (error) {
-  //       console.error("Error fetching projects:", error);
-  //     }
-  //   };
-  //   fetchProjects();
-  // }, []);
-
-  // Fetch projects from Appwrite database
   useEffect(() => {
     const fetchProjects = async () => {
       try {
