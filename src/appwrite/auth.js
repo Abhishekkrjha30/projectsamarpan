@@ -33,6 +33,11 @@ export class AuthService {
 
     // Login method
     async login({ email, password }){
+        // const user = await this.getCurrentUser();
+        // if (user) {
+        //     console.warn("User is already logged in. Logging out first.");
+        //     await this.logout(); // Ensure session is cleared before logging in
+        // }
         try {
             // Create a new session
             const session = await this.account.createEmailPasswordSession(email,password);

@@ -1,18 +1,15 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from './store/authSlice';
 import authService from './appwrite/auth';
 import ScrollToTop from "./component/ScrollToTop";
-
-
 import { HomePage, ChatPage, ProjectSubmission, SignUp, SignIn, IntroPage, Navbar, Footer, ProfilePage, ProjectPage, EditProjectSubmission } from './component/index';
-// import NotificationsPage from './component/notification/NotificationsPage';
 
 function App() {
   return (
     <Router>
-      <ScrollToTop/>
+      <ScrollToTop />
       <MainContent />
     </Router>
   );
@@ -21,20 +18,22 @@ function App() {
 const MainContent = () => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  const location = useLocation(); // Get current location
-  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
-
+  const location = useLocation();
+  // const authStatus = useSelector((state) => state.auth.user !== null); // ✅ Check if user exists
+  const authStatus = useSelector((state) => state.auth.userData !== null); // ✅ Fix property name
 
   useEffect(() => {
-    
     const checkUserStatus = async () => {
-
       try {
-        if (!authStatus) return; // Check if user is logged in first
-
+        if (!authStatus) {
+          
+          setLoading(false); // ✅ Ensure loading stops even if no user
+          return;
+        }
+        
         const userData = await authService.getCurrentUser();
         if (userData) {
-          dispatch(login({ userData }));
+          dispatch(login(userData));
         } else {
           dispatch(logout());
         }
@@ -42,24 +41,21 @@ const MainContent = () => {
         console.error("Error checking user status:", error);
         dispatch(logout());
       } finally {
-        setLoading(false);
+        setLoading(false); // ✅ Ensure loading stops
       }
     };
 
     checkUserStatus();
-  }, [dispatch]);
+  }, [dispatch, authStatus]); // ✅ Add authStatus dependency
 
-  // If loading, show a loading indicator
   if (loading) {
-    return <div>Loading...</div>; // Replace with a proper loading component/spinner
+    return <div>Loading...</div>;
   }
 
-  // Check if we are on the intro page ("/")
   const isIntroPage = location.pathname === "/";
 
   return (
-    <div className={`min-h-screen flex flex-col bg-white`}>
-      {/* Conditionally render Navbar (only if not on IntroPage) */}
+    <div className="min-h-screen flex flex-col bg-white">
       {!isIntroPage && <Navbar />}
 
       <main className={`flex-grow pt-14${isIntroPage ? 'h-full' : ''}`}>
@@ -72,13 +68,10 @@ const MainContent = () => {
           <Route path="/project-submission" element={<ProjectSubmission />} />
           <Route path="/projectPage" element={<ProjectPage />} />
           <Route path="/chat" element={<ChatPage />} />
-          {/* <Route path="/notifications" element={<NotificationsPage/>} /> */}
-          {/* Add this route for EditProjectSubmission */}
           <Route path="/edit-project/:projectId" element={<EditProjectSubmission />} />
         </Routes>
       </main>
 
-      {/* Conditionally render Footer (only if not on IntroPage) */}
       {!isIntroPage && <Footer />}
     </div>
   );

@@ -21,6 +21,8 @@ const HomePage = () => {
   
   
   useEffect(() => {
+    
+    
     const fetchProjects = async () => {
       try {
         const response = await projectSubmissionService.getAllProjects();

@@ -4,84 +4,63 @@ import { useState, useEffect, useMemo } from "react";
 import { Menu, X, Bell } from "lucide-react"; // Bell icon added
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
-import { useSelector } from "react-redux";
-import LogoutBtn from "./LogoutBtn"; // Assuming LogoutBtn is a reusable component
-import projectSubmissionService from "../appwrite/config";
-import authService from "../appwrite/auth"; // Ensure you have authService.getCurrentUser()
-
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/authSlice"; // ✅ Correct logout import
+import LogoutBtn from "./LogoutBtn"; // ✅ Logout button component
+import authService from "../appwrite/auth"; // ✅ Ensure Appwrite auth service is imported
 
 const Navbar = () => {
-  const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const authStatus = useSelector((state) => state.auth.status); // Redux state for authentication
-  const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
+  const authStatus = useSelector((state) => state.auth.status); // ✅ Redux state for authentication
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (!authStatus) return; // Check if user is logged in first
+      if (!authStatus) return;
       try {
-                
         const user = await authService.getCurrentUser();
         if (user) {
-          
           setUserId(user.$id);
         }
       } catch (error) {
         console.error("Error fetching user:", error);
       }
     };
-
     fetchUser();
   }, [authStatus]);
-  
 
-  // useEffect(() => {
-  //   let interval;
-  //   if (authStatus && userId) {
-  //     // fetchUnreadNotifications();
-
-  //     // // Polling every 5 seconds to check for new notifications
-  //     // interval = setInterval(() => {
-  //     //   fetchUnreadNotifications();
-  //     // }, 3000);
-  //   }
-  //   // return () => clearInterval(interval); // Cleanup interval on component unmount
-  // }, [authStatus, userId]);
-
-  // const fetchUnreadNotifications = async () => {
-  //   try {
-  //     const response = await projectSubmissionService.getUnseenNotifications(userId);
-      
-  //     // Ensure response.documents exists and is an array
-  //     const unseenNotifications = response.documents?.filter((notif) => !notif.seen) || [];
-  //     setUnreadCount(unseenNotifications.length);
-  //   } catch (error) {
-  //     console.error("Error fetching notifications:", error);
-  //   }  
-  // };
-
-  // Using useMemo to optimize the navItems list recalculation based on authStatus
+  // ✅ Optimized navigation items based on authentication status
   const navItems = useMemo(
     () => [
       { name: "Home", path: "/home", active: true },
       { name: "Projects", path: "/projectPage", active: true },
-      { name: "Profile", path: "/profile", active: true },
-      { name: "Chat", path: "/chat", active: true },
+      { name: "Profile", path: "/profile", active: authStatus },
+      { name: "Chat", path: "/chat", active: authStatus },
       { name: "Sign In", path: "/signin", active: !authStatus },
       { name: "Sign Up", path: "/sign-up", active: !authStatus },
     ],
     [authStatus]
   );
 
-  // Logout handler
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("authToken");
-    navigate("/"); // Navigate first, then clear localStorage
+  // ✅ Logout handler - Updates Redux & clears session data
+  const handleLogout = async () => {
+    try {
+      await authService.logout(); // ✅ Logout from Appwrite
+        dispatch(logout()); // ✅ Update Redux state immediately
+
+        // ✅ Ensure localStorage is cleared before checking status
+        localStorage.removeItem("user");
+        localStorage.removeItem("authToken");
+
+        navigate("/"); // ✅ Redirect to homepage
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
   };
 
-  // Navigation handler
+  // ✅ Navigation handler with authentication check
   const handleNavigation = (path) => {
     if (!authStatus && path !== "/home" && path !== "/sign-up" && path !== "/signin") {
       toast.error("You must sign in or sign up to access this page!");
@@ -118,27 +97,9 @@ const Navbar = () => {
                   )
               )}
 
-              {/* Notification Bell Icon for Desktop */}
-              {/* {authStatus && (
-                <div
-                  className="relative cursor-pointer top-3"
-                  onClick={() => navigate("/notifications")}
-                >
-                  <Bell size={24} className="hover:text-yellow-400 transition" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                      {unreadCount}
-                    </span>
-                  )}
-                </div>
-              )} */}
-
               {/* Logout Button */}
               {authStatus && (
-                <div
-                  onClick={handleLogout}
-                  className="font-bold hover:text-indigo-200"
-                >
+                <div onClick={handleLogout} className="font-bold hover:text-indigo-200 cursor-pointer">
                   <LogoutBtn />
                 </div>
               )}
@@ -146,7 +107,6 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center">
-
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="text-white hover:text-indigo-200 focus:outline-none"
@@ -182,25 +142,6 @@ const Navbar = () => {
                   )
               )}
 
-              {/* Notification Bell Icon in Mobile Menu */}
-              {authStatus && (
-                <div
-                  className="flex items-center space-x-2 text-white cursor-pointer hover:text-yellow-400"
-                  onClick={() => {
-                    navigate("/notifications");
-                    setIsOpen(false);
-                  }}
-                >
-                  <Bell size={24} />
-                  <span>Notifications</span>
-                  {unreadCount > 0 && (
-                    <span className="bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                      {unreadCount}
-                    </span>
-                  )}
-                </div>
-              )}
-
               {/* Logout Button in Mobile Menu */}
               {authStatus && (
                 <div
@@ -208,7 +149,7 @@ const Navbar = () => {
                     handleLogout();
                     setIsOpen(false);
                   }}
-                  className="block text-white hover:text-indigo-200 font-medium"
+                  className="block text-white hover:text-indigo-200 font-medium cursor-pointer"
                 >
                   <LogoutBtn />
                 </div>
