@@ -54,7 +54,7 @@ const HomePage = () => {
       
       
       const parsedUser = JSON.parse(storedUser); // Parse the JSON string
-      console.log(parsedUser);
+      
       
       setUser(parsedUser.$id);
       setIsLoggedIn(true);
